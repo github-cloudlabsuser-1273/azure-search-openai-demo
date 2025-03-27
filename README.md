@@ -1,5 +1,189 @@
 <!--
 ---
+name: RAG Chat App with Your Data (Python)
+description: Chat with your domain data using Azure OpenAI and Azure AI Search.
+languages:
+  - python
+  - typescript
+  - bicep
+  - azdeveloper
+products:
+  - azure-openai
+  - azure-cognitive-search
+  - azure-app-service
+  - azure
+page_type: sample
+urlFragment: azure-search-openai-demo
+---
+-->
+
+# RAG Chat App with Azure OpenAI and Azure AI Search (Python)
+
+This solution enables a ChatGPT-like experience over your documents using Retrieval Augmented Generation (RAG). It leverages Azure OpenAI Service for GPT models and Azure AI Search for data indexing and retrieval.
+
+This Python-based backend solution also has [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) versions. Learn more about [developing AI apps with Azure AI Services](https://aka.ms/azai).
+
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
+[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+
+## Security Notice
+
+This template is designed for demonstration purposes. Do not use it in production without implementing additional security measures. Refer to our [productionizing guide](docs/productionizing.md) and the [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/blog/azurearchitectureblog/azure-openai-landing-zone-reference-architecture/3882102) for best practices.
+
+## Table of Contents
+
+- [Features](#features)
+- [Azure Account Requirements](#azure-account-requirements)
+  - [Cost Estimation](#cost-estimation)
+- [Getting Started](#getting-started)
+  - [GitHub Codespaces](#github-codespaces)
+  - [VS Code Dev Containers](#vs-code-dev-containers)
+  - [Local Environment](#local-environment)
+- [Deploying](#deploying)
+  - [Redeploying](#redeploying)
+- [Running the Development Server](#running-the-development-server)
+- [Using the App](#using-the-app)
+- [Clean Up](#clean-up)
+- [Guidance](#guidance)
+  - [Resources](#resources)
+
+![Chat Screen](docs/images/chatscreen.png)
+
+[📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
+
+This sample demonstrates creating ChatGPT-like experiences over your data using RAG. It uses Azure OpenAI Service for GPT models and Azure AI Search for indexing and retrieval. Sample data is included for end-to-end testing.
+
+## Features
+
+- Multi-turn chat and single-turn Q&A interfaces
+- Displays citations and thought processes for answers
+- UI settings to tweak behavior and experiment
+- Azure AI Search integration for document indexing and retrieval
+- Optional features:
+  - [GPT-4 with vision](docs/gpt4v.md) for image-heavy documents
+  - [Speech input/output](docs/deploy_features.md#enabling-speech-inputoutput)
+  - [User login and data access](docs/login_and_acl.md) via Microsoft Entra
+- Performance monitoring with Application Insights
+
+### Architecture Diagram
+
+![RAG Architecture](docs/images/appcomponents.png)
+
+## Azure Account Requirements
+
+To deploy and run this example, you'll need:
+
+- **Azure Account**: [Sign up for free](https://azure.microsoft.com/free/cognitive-search/) to get free credits.
+- **Permissions**: Your account must have `Microsoft.Authorization/roleAssignments/write` permissions. See [RBAC roles](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles).
+
+### Cost Estimation
+
+Use the [Azure Pricing Calculator](https://azure.com/e/e3490de2372a4f9b909b0d032560e41b) to estimate costs for the following resources:
+
+- **Azure Container Apps**: Default host for deployment. [Pricing](https://azure.microsoft.com/pricing/details/container-apps/)
+- **Azure OpenAI**: GPT and Ada models. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
+- **Azure AI Search**: Basic tier. [Pricing](https://azure.microsoft.com/pricing/details/search/)
+- Additional services: See [deploying with minimal costs](docs/deploy_lowcost.md).
+
+⚠️ To avoid unnecessary costs, delete resources when not in use (`azd down`).
+
+## Getting Started
+
+### GitHub Codespaces
+
+Run this repo virtually using GitHub Codespaces:
+
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
+
+### VS Code Dev Containers
+
+Use the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
+
+1. Start Docker Desktop.
+2. Open the project:
+   [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+
+### Local Environment
+
+1. Install required tools:
+   - [Azure Developer CLI](https://aka.ms/azure-dev/install)
+   - [Python 3.9+](https://www.python.org/downloads/)
+   - [Node.js 18+](https://nodejs.org/download/)
+   - [Git](https://git-scm.com/downloads)
+   - [Powershell 7+ (Windows only)](https://github.com/powershell/powershell)
+2. Run:
+   ```shell
+   azd init -t azure-search-openai-demo
+   ```
+
+## Deploying
+
+1. Login to Azure:
+   ```shell
+   azd auth login
+   ```
+2. Create a new environment:
+   ```shell
+   azd env new
+   ```
+3. Deploy:
+   ```shell
+   azd up
+   ```
+
+### Redeploying
+
+For code changes:
+```shell
+azd deploy
+```
+
+For infrastructure changes:
+```shell
+azd up
+```
+
+## Running the Development Server
+
+After deploying, run locally:
+
+Windows:
+```shell
+./app/start.ps1
+```
+
+Linux/Mac:
+```shell
+./app/start.sh
+```
+
+## Using the App
+
+- **Azure**: Navigate to the deployed Azure WebApp URL.
+- **Local**: Open `127.0.0.1:50505`.
+
+## Clean Up
+
+To delete resources:
+```shell
+azd down
+```
+
+## Guidance
+
+Extensive documentation is available in the [docs](docs/README.md) folder.
+
+### Resources
+
+- [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+- [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
+
+### Getting Help
+
+For assistance, post in [GitHub Issues](/issues).
+
+> **Note**: The PDF documents used in this demo are for demonstration purposes only and do not reflect Microsoft's opinions or beliefs.!--
+---
 name: RAG chat app with your data (Python)
 description: Chat with your domain data using Azure OpenAI and Azure AI Search.
 languages:
